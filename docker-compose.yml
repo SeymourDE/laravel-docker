@@ -1,0 +1,61 @@
+### Mysql Server Container ##################################
+mysql:
+    build: ./mysql
+    ports:
+        - "3306:3306"
+    environment:
+        MYSQL_DATABASE: homestead
+        MYSQL_USER: homestead
+        MYSQL_PASSWORD: secret
+        MYSQL_ROOT_PASSWORD: root
+    hostname: DevMysql
+
+### Php-fpm Container ##################################
+php:
+    build: ./php
+    volumes:
+        - ~/laravel:/code
+    links:
+        - mysql:DevMysql
+        - beanstalkd:DevBeanstalkd
+        - memcached:DevMemcached
+        - redis:DevRedis
+        - mongo:DevMongo
+        - kafka:DevKafka
+    working_dir: '/'
+    hostname: devPHP
+
+### Nginx Server Container ##################################
+nginx:
+    build: ./nginx
+    ports:
+        - "80:80"
+        - "443:443"
+    links:
+        - php:devPHP
+    hostname: DevNginx
+
+### Beanstalkd Container ##################################
+beanstalkd:
+    build: ./beanstalkd
+    hostname: DevBeanstalkd
+
+### Memcached Container ##################################
+memcached:
+    build: ./memcached
+    hostname: DevMemcached
+
+### Redis Container ##################################
+redis:
+    build: ./redis
+    hostname: DevRedis
+
+### Mongo Container ##################################
+mongo:
+    build: ./mongo
+    hostname: DevMongo
+
+### Kafka Container ##################################
+kafka:
+    build: ./kafka
+    hostname: kafka
